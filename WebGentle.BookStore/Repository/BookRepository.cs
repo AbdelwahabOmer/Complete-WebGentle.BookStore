@@ -1,41 +1,114 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebGentle.BookStore.Data;
 using WebGentle.BookStore.Model;
 
 namespace WebGentle.BookStore.Repository
 {
-    public class BookRepository
+    public class BookRepository : IBookRepository
     {
+        private readonly BookStoreDbContext _bookStoreDbContext;
 
-        public List<BookModel> GetAllBooks()
+        public BookRepository(BookStoreDbContext bookStoreDbContext)
         {
-            return DataSource();
+            _bookStoreDbContext = bookStoreDbContext;
         }
 
-        public BookModel GetBookById(int Id)
+        public async Task<int> AddBook(BookModel bookModel)
         {
-            return DataSource().Where(a => a.Id == Id).FirstOrDefault();
+            var data = new Books()
+            {
+                Title = bookModel.Title,
+                Author = bookModel.Author,
+                Description = bookModel.Description,
+                LanguageId = bookModel.LanguageId,
+                Category = bookModel.Category,
+                TotalPages = bookModel.TotalPages,
+                ImageUrl = bookModel.CoverPhotoUrl,
+                BookPdfUrl = bookModel.BookPdfUrl,
+                CreatedOn = DateTime.UtcNow,
+                UpdatedOn = DateTime.UtcNow
+            };
+
+            data.BookGallery = new List<BookGallery>();
+            foreach (var file in bookModel.Gallery)
+            {
+                data.BookGallery.Add(new BookGallery()
+                {
+                    Name = file.Name,
+                    URL = file.URL
+                });
+            }
+
+            await _bookStoreDbContext.Books.AddAsync(data);
+            await _bookStoreDbContext.SaveChangesAsync();
+            return data.Id;
+        }
+
+        public async Task<List<BookModel>> GetAllBooks()
+        {
+            return await _bookStoreDbContext.Books.Select(bookModel => new BookModel
+            {
+                Id = bookModel.Id,
+                Title = bookModel.Title,
+                Author = bookModel.Author,
+                Description = bookModel.Description,
+                Category = bookModel.Category,
+                LanguageId = bookModel.LanguageId,
+                LanguageName = bookModel.Language.Name,
+                TotalPages = bookModel.TotalPages,
+                CoverPhotoUrl = bookModel.ImageUrl,
+                BookPdfUrl = bookModel.BookPdfUrl
+            }).ToListAsync();
+        }
+
+        public async Task<BookModel> GetBookById(int Id)
+        {
+            return await _bookStoreDbContext.Books.Where(a => a.Id == Id).Select(bookModel => new BookModel
+            {
+                Id = bookModel.Id,
+                Title = bookModel.Title,
+                Author = bookModel.Author,
+                Description = bookModel.Description,
+                Category = bookModel.Category,
+                LanguageId = bookModel.LanguageId,
+                LanguageName = bookModel.Language.Name,
+                TotalPages = bookModel.TotalPages,
+                CoverPhotoUrl = bookModel.ImageUrl,
+                BookPdfUrl = bookModel.BookPdfUrl,
+                Gallery = bookModel.BookGallery.Select(g => new GalleryModel()
+                {
+                    Id = g.Id,
+                    Name = g.Name,
+                    URL = g.URL
+                }).ToList()
+
+            }).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<BookModel>> GetTopBooksAsync(int count)
+        {
+            return await _bookStoreDbContext.Books.Select(bookModel => new BookModel
+            {
+                Id = bookModel.Id,
+                Title = bookModel.Title,
+                Author = bookModel.Author,
+                Description = bookModel.Description,
+                Category = bookModel.Category,
+                LanguageId = bookModel.LanguageId,
+                LanguageName = bookModel.Language.Name,
+                TotalPages = bookModel.TotalPages,
+                CoverPhotoUrl = bookModel.ImageUrl,
+                BookPdfUrl = bookModel.BookPdfUrl
+            }).Take(count).ToListAsync();
         }
 
         public List<BookModel> SearchBook(string title, string author)
         {
-            return DataSource().Where(a => a.Title.Contains(title) || a.Author.Contains(author)).ToList();
-        }
-
-
-
-        private List<BookModel> DataSource()
-        {
-            return new List<BookModel>()
-            {
-                new BookModel(){Id=1,Title="MVC",Author="Ali",Description="this is description for MVC",Category="Action",Language="English",TotalPages=250},
-                new BookModel(){Id=2,Title="ASP",Author="Musa",Description="this is description for ASP",Category="Drama",Language="Arabic",TotalPages=140},
-                new BookModel(){Id=3,Title="HTML",Author="Abdu",Description="this is description for HTML",Category="Comedy",Language="English",TotalPages=600},
-                new BookModel(){Id=4,Title="C#",Author="Jamal",Description="this is description for C#",Category="Comedy",Language="Arabic",TotalPages=300},
-                new BookModel(){Id=5,Title="JAVA",Author="Omnia",Description="this is description for JAVA",Category="Action",Language="English",TotalPages=750}
-            };
+            return null;
         }
 
     }

@@ -1,0 +1,117 @@
+﻿@model BookModel
+@inject WebGentle.BookStore.Repository.ILanguageRepository _LanguageRepo
+@{
+    ViewBag.Title = "Add Books";
+}
+
+<div class="container">
+    <h3 class="display-4">Add Book</h3>
+
+    @if (ViewBag.IsSuccess == true)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>congratulation!</strong> book added successfully. click <a asp-controller="Book" asp-action="GetBook" asp-route-id="@ViewBag.BookId">here</a> to see details
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status" id="myLoader" style="display:none">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" asp-controller="Book" asp-action="AddBook" data-ajax="true"
+          data-ajax-complete="myComplete" data-ajax-success="mySuccess" data-ajax-failure="myFailure"
+          data-ajax-loading="#myLoader">
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Author"></label>
+                    <input asp-for="Author" class="form-control" />
+                    <span asp-validation-for="Author" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label asp-for="Category"></label>
+                    <input asp-for="Category" class="form-control" />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="LanguageId"></label>
+                    <select asp-for="LanguageId" class="form-control" asp-items="(await _LanguageRepo.GetLanguages()).Select(x=> new SelectListItem() { Text=x.Name,Value=x.Id.ToString() })">
+                        <option value="">select language</option>
+                    </select>
+                    <span asp-validation-for="LanguageId" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="TotalPages"></label>
+                    <input asp-for="TotalPages" class="form-control" />
+                    <span asp-validation-for="TotalPages" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CoverPhoto"></label>
+            <div class="mb-3">
+                <input asp-for="CoverPhoto" class="form-control" id="formFile">
+            </div>
+            <span asp-validation-for="CoverPhoto" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="GalleryPhotos"></label>
+            <div class="mb-3">
+                <input asp-for="GalleryPhotos" class="form-control" id="formFile">
+            </div>
+            <span asp-validation-for="GalleryPhotos" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="BookPdf"></label>
+            <div class="mb-3">
+                <input asp-for="BookPdf" class="form-control" id="formFile">
+            </div>
+            <span asp-validation-for="BookPdf" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Add Book" class="btn btn-primary" />
+        </div>
+
+    </form>
+</div>
+
+@section scripts{
+
+    <script>
+        function myComplete(data) {
+            //alert("Complete");
+        }
+        function mySuccess(data) {
+            //alert("Success");
+        }
+        function myFailure(data) {
+            //alert("Failure");
+        }
+    </script>
+
+}

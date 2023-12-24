@@ -1,0 +1,59 @@
+﻿@using Microsoft.Extensions.Configuration
+
+@*
+    @inject IConfiguration _configuration
+    @{
+        var newBook = new NewBookAlertConfig();
+        _configuration.Bind("NewBookAlert", newBook);
+
+    }
+*@
+<header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="~/images/ico.ico" width="30" height="30" />
+                Book Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Home" asp-action="AboutUs">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Book" asp-action="GetAllBooks">All Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Book" asp-action="AddBook">Add Book</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <partial name="_LoginInfo" />
+                </form>
+
+            </div>
+        </div>
+    </nav>
+
+    @*@if (newBook.BookAlert)
+        {
+            <div class="alert alert-info" role="alert">
+                @newBook.BookName
+            </div>
+        }*@
+
+
+</header>

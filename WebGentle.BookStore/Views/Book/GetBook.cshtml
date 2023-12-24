@@ -1,12 +1,42 @@
-﻿@using WebGentle.BookStore.Model;
-@model BookModel
+﻿@model BookModel
+
+@{
+    ViewBag.Title = "Book Detail " + Model.Title;
+}
 
 <div class="container">
-    <h3 class="display-4">Book Details</h3>
+    <h3 class="display-4">Book Detail</h3>
     <div class="row">
 
         <div class="col-md-6">
-            <img class="d-block w-100" src="~/images/1.jpg" height="350" width="200" />
+            @*<img class="d-block w-100" src="@Model.CoverPhotoUrl" height="350" width="200" />*@
+
+            <div id="carouselExample" class="carousel slide">
+                <div class="carousel-inner">
+                    @*@foreach (var book in Model.Gallery)
+                        {
+                            <div class="carousel-item active">
+                                <img src="@book.URL" class="d-block w-100" alt="@book.Name">
+                            </div>
+                        }*@
+
+                    @for (int i = 0; i < Model.Gallery.Count(); i++)
+                    {
+                        <div class="carousel-item @(i==0 ? "active" : "")">
+                            <img src="@Model.Gallery[i].URL" class="d-block w-100" alt="@Model.Gallery[i].Name">
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
         </div>
         <div class="col-md-6">
 
@@ -31,7 +61,7 @@
 
             <div class="row">
                 <div class="col-md-4">
-                    <button class="btn btn-outline-primary">Read Now</button>
+                    <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Read Now</a>
                 </div>
             </div>
 
@@ -39,24 +69,30 @@
             <ul class="list-group">
                 <li class="list-group-item"><span class="font-weight-bold">Category: </span> @Model.Category</li>
                 <li class="list-group-item"><span class="font-weight-bold">Total Pages: </span> @Model.TotalPages</li>
-                <li class="list-group-item"><span class="font-weight-bold">Language: </span> @Model.Language</li>
+                <li class="list-group-item"><span class="font-weight-bold">Language: </span> @Model.LanguageName</li>
             </ul>
 
-            @*<div class="card mb-4 shadow-sm">
-                    <div class="card-body">
-                        <h3>@Model.Title</h3>
-                        <p class="card-text">@Model.Description</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
-                                <a href="#" class="btn btn-sm btn-outline-secondary">View details</a>
-                            </div>
-                            <small class="text-muted">@Model.Author</small>
-                        </div>
-                    </div>
-                </div>*@
-
         </div>
+    </div>
 
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Book PDF</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @*<embed src="@Model.BookPdfUrl" class="w-100" />*@
+                    <iframe src="@Model.BookPdfUrl" class="w-100" ></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 
